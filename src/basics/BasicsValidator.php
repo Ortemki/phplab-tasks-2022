@@ -1,58 +1,28 @@
 <?php
 
-
-namespace  basics;
-
+namespace basics;
 
 class BasicsValidator implements BasicsValidatorInterface
 {
 
     public function isMinutesException(int $minute): void
     {
-        try{
-            if($minute < 0 OR $minute > 59){
-                throw new \InvalidArgumentException();
-            }
-        }catch(\InvalidArgumentException $e){
-            die();
+        if (!in_array($minute, range(0,59))) {
+            throw new \InvalidArgumentException();
         }
     }
 
     public function isYearException(int $year): void
     {
-        try{
-            if($year < 1900){
-                throw new \InvalidArgumentException();
-            }
-        }catch(\InvalidArgumentException $e){
-            die();
+        if ($year < 1900) {
+            throw new \InvalidArgumentException();
         }
     }
 
     public function isValidStringException(string $input): void
     {
-        try{
-            if(strlen($input) > 6 ){
-                throw new \InvalidArgumentException();
-            }
-        }catch(\InvalidArgumentException $e){
-            die();
+        if (mb_strlen($input) > 6) {
+            throw new \InvalidArgumentException();
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

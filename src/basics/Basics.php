@@ -1,7 +1,8 @@
 <?php
 
-namespace  basics;
+namespace basics;
 
+use Webmozart\Assert\InvalidArgumentException;
 
 class Basics implements BasicsInterface
 {
@@ -16,13 +17,13 @@ class Basics implements BasicsInterface
     {
         $this->validator->isMinutesException($minute);
 
-        if($minute >= 1 AND $minute <=15){
+        if(in_array($minute, range(1,15))){
             return 'first';
-        }elseif($minute >= 16 AND $minute <=30){
+        } elseif (in_array($minute, range(16,30))) {
             return 'second';
-        }elseif($minute >= 31 AND $minute <=45){
+        } elseif (in_array($minute, range(31,45))) {
             return 'third';
-        }elseif(($minute >= 46 AND $minute <= 59) OR $minute === 0){
+        } elseif ((in_array($minute, range(46,59))) or $minute === 0) {
             return 'fourth';
         }
     }
@@ -30,26 +31,16 @@ class Basics implements BasicsInterface
     public function isLeapYear(int $year): bool
     {
         $this->validator->isYearException($year);
-        $leapYear = date("L", mktime(0,0,0, 7,7, $year));
-        switch ($leapYear) {
-            case 0:
-                return false;
-                break;
-            case 1:
-                return true;
-                break;
-        }
+
+        return date("L", mktime(0, 0, 0, 7, 7, $year));
     }
 
     public function isSumEqual(string $input): bool
     {
         $this->validator->isValidStringException($input);
-        $firstPart = array_sum(str_split(mb_strcut($input,0,3)));
-        $secondPart = array_sum(str_split(mb_strcut($input,3,3)));
-        if($firstPart == $secondPart){
-            return true;
-        }else{
-            return false;
-        }
+
+        $firstPart = array_sum(str_split(mb_strcut($input, 0, 3)));
+        $secondPart = array_sum(str_split(mb_strcut($input, 3, 3)));
+        return $firstPart == $secondPart;
     }
 }
