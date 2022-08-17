@@ -23,13 +23,6 @@ class Strings implements StringsInterface
 
     public function getBrandName(string $noun): string
     {
-        if ($noun[0] === $noun[-1]) {
-            $brandName = ucfirst($noun) . substr($noun, 1);
-        } else {
-            $brandName = "The " . ucfirst($noun);
-        }
-        return $brandName;
-
-//        return ($noun[0] === $noun[-1]) ? (ucfirst($noun) . substr($noun, 1)) : ("The " . ucfirst($noun));
+        return ($noun[0] === $noun[-1]) ? (ucfirst($noun) . substr($noun, 1)) : ("The " . ucfirst($noun));
     }
 }
