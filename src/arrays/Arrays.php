@@ -4,48 +4,49 @@ namespace arrays;
 
 class Arrays implements ArraysInterface
 {
-
     public function repeatArrayValues(array $input): array
     {
-        return array_merge($input, array_reverse($input));
+        $result = [];
+
+        foreach($input as $number){
+            for($i = 1; $i <= $number; $i++){
+                $result[] = $number;
+            }
+        }
+
+        return $result;
     }
 
     public function getUniqueValue(array $input): int
     {
-        if(empty($input)){
-            return 0;
-        }else{
-            $numRepeat = array_count_values($input);
-            $unique = [];
-            foreach($numRepeat as $number => $count){
-                if($count === 1){
-                    $unique[] = $number;
-                }
-            }
-            if(empty($unique)){
-                return 0;
-            }else{
-                return min($unique);
-            }
+        if (empty($input)) {
+            $result = 0;
+        } else {
+            $noRepeatNumbers = array_unique($input);
+            $duplicates = array_diff_assoc($input, $noRepeatNumbers);
+            $uniqueValues = array_diff($input, $duplicates);
+            $result = !empty($uniqueValues) ? min($uniqueValues) : 0;
         }
+
+        return $result;
     }
 
     public function groupByTag(array $input): array
     {
-        $newArr = [];
+        $result = [];
 
-        foreach ($input as $ele){
-            foreach ($ele['tags'] as $tag){
-                $newArr[$tag][] = $ele['name'];
+        foreach ($input as $product){
+            foreach ($product['tags'] as $tag){
+                $result[$tag][] = $product['name'];
             }
         }
 
-        foreach($newArr as &$tag){
-            sort($tag);
-        }
+        array_walk($result, function (&$value) {
+            sort($value);
+        });
 
-        ksort($newArr);
+        ksort($result);
 
-        return $newArr;
+        return $result;
     }
 }
