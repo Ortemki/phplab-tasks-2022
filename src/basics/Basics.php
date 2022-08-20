@@ -2,8 +2,6 @@
 
 namespace basics;
 
-use Webmozart\Assert\InvalidArgumentException;
-
 class Basics implements BasicsInterface
 {
     private $validator;
@@ -17,13 +15,13 @@ class Basics implements BasicsInterface
     {
         $this->validator->isMinutesException($minute);
 
-        if(in_array($minute, range(1,15))){
+        if($minute >= 1 && $minute <=15){
             return 'first';
-        } elseif (in_array($minute, range(16,30))) {
+        }elseif($minute >= 16 && $minute <=30){
             return 'second';
-        } elseif (in_array($minute, range(31,45))) {
+        }elseif($minute >= 31 && $minute <=45){
             return 'third';
-        } elseif ((in_array($minute, range(46,59))) or $minute === 0) {
+        }elseif(($minute >= 46 && $minute <= 59) || $minute === 0){
             return 'fourth';
         }
     }
@@ -32,7 +30,7 @@ class Basics implements BasicsInterface
     {
         $this->validator->isYearException($year);
 
-        return date("L", mktime(0, 0, 0, 7, 7, $year));
+        return ($year % 400 === 0) || (($year % 100 !== 0) && ($year % 4 === 0));
     }
 
     public function isSumEqual(string $input): bool
@@ -41,6 +39,7 @@ class Basics implements BasicsInterface
 
         $firstPart = array_sum(str_split(mb_strcut($input, 0, 3)));
         $secondPart = array_sum(str_split(mb_strcut($input, 3, 3)));
+
         return $firstPart == $secondPart;
     }
 }
