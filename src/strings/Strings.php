@@ -11,7 +11,7 @@ class Strings implements StringsInterface
 
     public function mirrorMultibyteString(string $input): string
     {
-        $wordsArr = explode(" ", $input);
+        $wordsArr = explode(' ', $input);
         $new_string = [];
 
         foreach ($wordsArr as $word) {
@@ -23,6 +23,6 @@ class Strings implements StringsInterface
 
     public function getBrandName(string $noun): string
     {
-        return ($noun[0] === $noun[-1]) ? (ucfirst($noun) . substr($noun, 1)) : ("The " . ucfirst($noun));
+        return $noun[0] === $noun[-1] ? ucfirst($noun) . substr($noun, 1) : "The " . ucfirst($noun);
     }
 }
