@@ -14,6 +14,6 @@ class SayHelloArgumentWrapperTest extends TestCase
     public function testNegative()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->functions->sayHelloArgumentWrapper([1, 2]);
+        $this->functions->sayHelloArgumentWrapper(array());
     }
 }
