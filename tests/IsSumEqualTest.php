@@ -24,7 +24,6 @@ class IsSumEqualTest extends TestCase
     public function testNegative()
     {
         $this->expectException(InvalidArgumentException::class);
-
         $this->basics->isSumEqual('1234');
     }
 
