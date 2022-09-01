@@ -24,7 +24,6 @@ class IsLeapYearTest extends TestCase
     public function testNegative()
     {
         $this->expectException(InvalidArgumentException::class);
-
         $this->basics->isLeapYear(1500);
     }
 

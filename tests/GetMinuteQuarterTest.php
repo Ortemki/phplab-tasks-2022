@@ -24,7 +24,6 @@ class GetMinuteQuarterTest extends TestCase
     public function testNegative()
     {
         $this->expectException(InvalidArgumentException::class);
-
         $this->basics->getMinuteQuarter(75);
     }
 

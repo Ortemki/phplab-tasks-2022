@@ -57,7 +57,7 @@ class Functions
      */
     public function sayHelloArgumentWrapper($arg): string
     {
-        if(!is_string($arg) || !is_int($arg) || !is_bool($arg)){
+        if(!is_string($arg) && !is_int($arg) && !is_bool($arg)){
             throw new \InvalidArgumentException();
         }
 

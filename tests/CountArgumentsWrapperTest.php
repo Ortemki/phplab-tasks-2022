@@ -11,9 +11,23 @@ class CountArgumentsWrapperTest extends TestCase
         $this->functions = new functions\Functions();
     }
 
-    public function testNegative()
+    /**
+     * @dataProvider negativeDataProvider
+     */
+    public function testNegative($input, $expectedException)
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->functions->CountArgumentsWrapper([1]);
+        $this->expectException($expectedException);
+
+        $this->functions->CountArgumentsWrapper($input);
+    }
+
+    public function negativeDataProvider(): array
+    {
+        return [
+            [[1], InvalidArgumentException::class],
+            [['1', 2], InvalidArgumentException::class],
+            [[1, true], InvalidArgumentException::class],
+            [[null], InvalidArgumentException::class]
+        ];
     }
 }

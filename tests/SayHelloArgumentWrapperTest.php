@@ -11,9 +11,23 @@ class SayHelloArgumentWrapperTest extends TestCase
         $this->functions = new functions\Functions();
     }
 
-    public function testNegative()
+    /**
+     * @dataProvider negativeDataProvider
+     */
+    public function testNegative($input, $expectedException)
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->functions->sayHelloArgumentWrapper(array());
+        $this->expectException($expectedException);
+
+        $this->functions->sayHelloArgumentWrapper($input);
     }
+
+    public function negativeDataProvider()
+    {
+        return [
+            [[1, 2, 3], InvalidArgumentException::class],
+            [null, InvalidArgumentException::class],
+            [$this->functions, InvalidArgumentException::class],
+        ];
+    }
+
 }

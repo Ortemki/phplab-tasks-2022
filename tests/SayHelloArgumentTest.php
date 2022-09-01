@@ -14,7 +14,7 @@ class SayHelloArgumentTest extends TestCase
     /**
      * @dataProvider positiveDataProvider
      */
-    public function testPositive($input, $expected)
+    public function testPositive($input, $expected): array
     {
         $this->assertEquals($expected, $this->functions->sayHelloArgument($input));
     }
