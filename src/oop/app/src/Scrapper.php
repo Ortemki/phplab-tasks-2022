@@ -10,11 +10,13 @@
 namespace src\oop\app\src;
 
 use src\oop\app\src\Models\Movie;
+use src\oop\app\src\Transporters\TransportInterface;
+use src\oop\app\src\Parsers\ParserInterface;
 
 class Scrapper
 {
-    private $transporter;
-    private $parser;
+    private TransportInterface $transporter;
+    private ParserInterface $parser;
 
     public function __construct($transporter, $parser)
     {
