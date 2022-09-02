@@ -4,45 +4,27 @@ require_once './functions.php';
 
 $airports = require './airports.php';
 
+// Filtering
 if (isset($_GET['filter_by_first_letter'])) {
-    $airports = filterByLetter($airports, $_GET['filter_by_first_letter']);
-}
+    $letter = $_GET['filter_by_first_letter'];
 
-if (isset($_GET['sort'])) {
-    $airports = sortAirportsBy($airports, $_GET['sort']);
+    $airports = array_filter(
+        $airports,
+        function ($airport) use ($letter) {
+            return $airport['name'][0] == $letter;
+        }
+    );
 }
 
 if (isset($_GET['state'])) {
-    $airports = filterByState($airports, $_GET['state']);
-}
+    $state = $_GET['state'];
 
-// Filtering
-function filterByLetter(array $airports,string $letter)
-{
-    $sortAirports = [];
-
-    foreach($airports as $airport){
-        if($airport['name'][0] == $letter){
-            $sortAirports[] = $airport;
+    $airports = array_filter(
+        $airports,
+        function ($airport) use ($state) {
+            return $airport['state'] == $state;
         }
-    }
-
-    sort($sortAirports);
-
-    return $sortAirports;
-}
-
-function filterByState(array $airports, string $state)
-{
-    $airportsInState = [];
-
-    foreach ($airports as $airport) {
-        if ($airport['state'] == $state) {
-            $airportsInState[] = $airport;
-        }
-    }
-
-    return $airportsInState;
+    );
 }
 /**
  * Here you need to check $_GET request if it has any filtering
@@ -50,19 +32,18 @@ function filterByState(array $airports, string $state)
  * (see Filtering tasks 1 and 2 below)
  */
 
-
 // Sorting
-function sortBy($param)
-{
-    return function ($a, $b) use ($param) {
-        return $a[$param] <=> $b[$param];
-    };
-}
+if (isset($_GET['sort'])) {
+    $param = $_GET['sort'];
 
-function sortAirportsBy($airports, $param)
-{
+    function sortBy($param)
+    {
+        return function ($a, $b) use ($param) {
+            return $a[$param] <=> $b[$param];
+        };
+    }
+
     usort($airports, sortBy($param));
-    return $airports;
 }
 /**
  * Here you need to check $_GET request if it has sorting key
@@ -72,7 +53,7 @@ function sortAirportsBy($airports, $param)
 
 // Pagination
 $page = $_GET['page'] ?? 1;
-$perPage = 5;
+$perPage = 10;
 $start = ($page - 1) * $perPage;
 
 $page_count = ceil(count($airports) / $perPage);
@@ -111,17 +92,17 @@ $airportsForShow = array_slice($airports, $start, $perPage);
     -->
 
     <?php
-        $letterHref = '';
-        if(isset($_GET['state'])){
-            $letterHref = "&state=$_GET[state]";
-        }
+    $letterHref = [];
+    if (isset($_GET['state'])) {
+        $letterHref['state'] = $_GET['state'];
+    }
     ?>
 
     <div class="alert alert-dark">
         Filter by first letter:
 
         <?php foreach (getUniqueFirstLetters(require './airports.php') as $letter): ?>
-            <a href="?filter_by_first_letter=<?= $letter ?><?=$letterHref?>"><?= $letter ?></a>
+            <a href="?<?= http_build_query(["filter_by_first_letter" => $letter, ...$letterHref]) ?>"><?= $letter ?></a>
         <?php endforeach; ?>
 
         <a href="/src/web" class="float-right">Reset all filters</a>
@@ -138,26 +119,22 @@ $airportsForShow = array_slice($airports, $start, $perPage);
     -->
 
     <?php
-        $sortHref = '';
-
-        if (isset($_GET['filter_by_first_letter']) && isset($_GET['page'])) {
-            $sortHref = "?page=$_GET[page]&filter_by_first_letter=$_GET[filter_by_first_letter]&";
-        } elseif (isset($_GET['filter_by_first_letter'])) {
-            $sortHref = "?filter_by_first_letter=$_GET[filter_by_first_letter]&";
-        } elseif (isset($_GET['page'])) {
-            $sortHref = "?page=$_GET[page]&";
-        } else {
-            $sortHref = "?";
-        }
+    $sortHref = [];
+    if (isset($_GET['filter_by_first_letter'])) {
+        $sortHref['filter_by_first_letter'] = $_GET['filter_by_first_letter'];
+    }
+    if (isset($_GET['page'])) {
+        $sortHref['page'] = $_GET['page'];
+    }
     ?>
 
     <table class="table">
         <thead>
         <tr>
-            <th scope="col"><a href="<?= $sortHref ?>sort=name">Name</a></th>
-            <th scope="col"><a href="<?= $sortHref ?>sort=code">Code</a></th>
-            <th scope="col"><a href="<?= $sortHref ?>sort=state">State</a></th>
-            <th scope="col"><a href="<?= $sortHref ?>sort=city">City</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'name', ...$sortHref]) ?>">Name</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'code', ...$sortHref]) ?>">Code</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'state', ...$sortHref]) ?>">State</a></th>
+            <th scope="col"><a href="?<?= http_build_query(['sort' => 'city', ...$sortHref]) ?>">City</a></th>
             <th scope="col">Address</th>
             <th scope="col">Timezone</th>
         </tr>
@@ -173,11 +150,11 @@ $airportsForShow = array_slice($airports, $start, $perPage);
                i.e. if you have filter_by_first_letter set you can additionally use filter_by_state
         -->
         <?php
-            $stateHref = '?';
+        $stateHref = [];
 
-            if(isset($_GET['filter_by_first_letter'])){
-                $stateHref = "?filter_by_first_letter=$_GET[filter_by_first_letter]&";
-            }
+        if (isset($_GET['filter_by_first_letter'])) {
+            $stateHref['filter_by_first_letter'] = $_GET['filter_by_first_letter'];
+        }
         ?>
 
 
@@ -185,7 +162,7 @@ $airportsForShow = array_slice($airports, $start, $perPage);
             <tr>
                 <td><?= $airport['name'] ?></td>
                 <td><?= $airport['code'] ?></td>
-                <td><a href="<?= $stateHref?>state=<?= $airport['state']?>"><?= $airport['state'] ?></a></td>
+                <td><a href="?<?= http_build_query(['state' => $airport['state'], ...$stateHref])?>"><?= $airport['state'] ?></a></td>
                 <td><?= $airport['city'] ?></td>
                 <td><?= $airport['address'] ?></td>
                 <td><?= $airport['timezone'] ?></td>
@@ -204,25 +181,25 @@ $airportsForShow = array_slice($airports, $start, $perPage);
     -->
     <?php
 
-        $pageHref = '';
+    $pageHref = [];
 
-        if(isset($_GET['filter_by_first_letter'])){
-            $pageHref .= "&filter_by_first_letter=$_GET[filter_by_first_letter]";
-        }
+    if (isset($_GET['filter_by_first_letter'])) {
+        $pageHref['filter_by_first_letter'] = $_GET['filter_by_first_letter'];
+    }
 
-        if(isset($_GET['state'])){
-            $pageHref .= "&state=$_GET[state]";
-        }
+    if (isset($_GET['state'])) {
+        $pageHref['state'] = $_GET['state'];
+    }
 
-        if(isset($_GET['sort'])){
-            $pageHref .= "&sort=$_GET[sort]";
-        }
+    if (isset($_GET['sort'])) {
+        $pageHref['sort'] = $_GET['sort'];
+    }
     ?>
 
     <nav aria-label="Navigation">
         <ul class="pagination justify-content-center">
             <?php for ($page = 1; $page <= $page_count; $page++): ?>
-                <li class="page-item"><a class="page-link" href="?page=<?= $page . $pageHref ?>"><?= $page; ?></a></li>
+                <li class="page-item"><a class="page-link" href="?<?= http_build_query(['page' => $page, ...$pageHref]) ?>"><?= $page; ?></a></li>
             <?php endfor; ?>
         </ul>
     </nav>
