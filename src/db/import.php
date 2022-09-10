@@ -30,6 +30,33 @@ foreach (require_once('../web/airports.php') as $item) {
     }
 
     // TODO States
+    $sth = $pdo->prepare('SELECT id FROM states WHERE name = :name');
+    $sth->setFetchMode(\PDO::FETCH_ASSOC);
+    $sth->execute(['name' => $item['state']]);
+    $state = $sth->fetch();
+
+    if (!$state) {
+        $sth = $pdo->prepare('INSERT INTO states (name) VALUES (:name)');
+        $sth->execute(['name' => $item['state']]);
+
+        $state_id = $pdo->lastInsertId();
+    } else {
+        $state_id = $state['id'];
+    }
 
     // TODO Airports
+    $sth = $pdo->prepare(
+        'INSERT INTO airports (name, code, city_id, state_id, address, timezone) 
+                VALUES (:name, :code, :city_id, :state_id, :address, :timezone)'
+    );
+    $sth->execute(
+        [
+            'name' => $item['name'],
+            'code' => $item['code'],
+            'city_id' => $cityId,
+            'state_id' => $state_id,
+            'address' => $item['address'],
+            'timezone' => $item['timezone'],
+        ]
+    );
 }
