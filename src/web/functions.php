@@ -12,11 +12,9 @@
  */
 function getUniqueFirstLetters(array $airports)
 {
-    $firstLetter = function ($airport) {
+    $letters = array_unique(array_map(function ($airport) {
         return $airport['name'][0];
-    };
-
-    $letters = array_unique(array_map($firstLetter, $airports));
+    }, $airports));
 
     sort($letters);
 

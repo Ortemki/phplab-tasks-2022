@@ -6,25 +6,15 @@ $airports = require './airports.php';
 
 // Filtering
 if (isset($_GET['filter_by_first_letter'])) {
-    $letter = $_GET['filter_by_first_letter'];
-
-    $airports = array_filter(
-        $airports,
-        function ($airport) use ($letter) {
-            return $airport['name'][0] == $letter;
-        }
-    );
+    $airports = array_filter($airports, function($airport){
+        return $airport['name'][0] == $_GET['filter_by_first_letter'];
+    });
 }
 
 if (isset($_GET['state'])) {
-    $state = $_GET['state'];
-
-    $airports = array_filter(
-        $airports,
-        function ($airport) use ($state) {
-            return $airport['state'] == $state;
-        }
-    );
+    $airports = array_filter($airports, function($airport){
+       return $airport['state'] ==  $_GET['state'];
+    });
 }
 /**
  * Here you need to check $_GET request if it has any filtering
@@ -34,16 +24,9 @@ if (isset($_GET['state'])) {
 
 // Sorting
 if (isset($_GET['sort'])) {
-    $param = $_GET['sort'];
-
-    function sortBy($param)
-    {
-        return function ($a, $b) use ($param) {
-            return $a[$param] <=> $b[$param];
-        };
-    }
-
-    usort($airports, sortBy($param));
+    usort($airports, function($a, $b){
+        return $a[$_GET['sort']] <=> $b[$_GET['sort']];
+    });
 }
 /**
  * Here you need to check $_GET request if it has sorting key
